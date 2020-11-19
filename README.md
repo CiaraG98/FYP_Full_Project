@@ -1,1 +1,2 @@
-# Celebrity_FYP
+# Final Year Project
+# Celebrity Interface
