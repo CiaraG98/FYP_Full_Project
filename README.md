@@ -1,3 +1,0 @@
-# Final Year Project - Celebrity Interface
-
-details tbc...
