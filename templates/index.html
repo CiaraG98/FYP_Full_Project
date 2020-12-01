@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>I'm a Celebrity</title>
+        <link href={{ url_for('static', filename='css/styles.css') }} rel="stylesheet"/>
+    </head>
+    <body>
+        <div id='WebContainer'>
+            <header id='page_header'>
+                <img src="/static/images/logo.png" alt="tcd logo" id="tcdLogo">
+                <div id='title'>I'm a Celebrity</div>
+            </header>
+            <button id='bot_button' onclick="invokeBot()">Get Bot Personality</button>
+            <div id='bot_frame'>
+                <div id='bot_body'>
+                    <p id='bot_txt'></p>
+                    <span id='bot_reply'></span>
+                </div>
+                <div id='user_input'>
+                    <input type='text' id='input'>
+                    <button id='send' onclick="reply_to_bot()">Send</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            function invokeBot(){
+                console.log("invokeBot Called...");
+                fetch('/invoke_bot').then(function(response){
+                    return response.json();
+                }).then(function(json){
+                    console.log(json);
+                    let txt = document.getElementById("bot_reply");
+                    txt.innerHTML = json.persona;
+                })
+            }
+
+            function reply_to_bot(){
+                console.log("reply called...");
+                reply_txt = document.getElementById("input").value;
+                fetch('/reply_to_bot', {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "user_reply" : reply_txt
+                    })
+                }).then(function(response){
+                    return response.json();
+                }).then(function(json){
+                    console.log(json);
+                });
+            }
+        </script>
+    </body>
+</html>
