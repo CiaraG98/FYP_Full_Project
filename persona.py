@@ -1,7 +1,6 @@
 import json
 from pytorch_pretrained_bert import cached_path
 
-
 # s3 bucket!!
 url = "https://s3.amazonaws.com/datasets.huggingface.co/personachat/personachat_self_original.json"
 
@@ -11,10 +10,9 @@ fw = open(file_name, 'a')
 
 # Download and load JSON dataset
 personachat_file = cached_path(url)
-print(personachat_file)
 with open(personachat_file, "r", encoding="utf-8") as f:
     dataset = json.loads(f.read())
-    
+    print(dataset['train'][:1][0]['utterances'][0].keys())
     for i, persona in enumerate(dataset['train']):
         if i <= 3:
             label = "PERSONA " + str(i)

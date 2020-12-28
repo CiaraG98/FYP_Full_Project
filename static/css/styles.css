@@ -59,7 +59,20 @@ body, html{
     padding: 5px;
     border-radius: 5px;
     background-color: ghostwhite;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scroll-behavior: auto;
 }
+
+#bot_body::-webkit-scrollbar{
+    width: 10px;
+}
+
+#bot_body::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+    background: rgba(0, 0, 0, .1);
+}
+
 #bot_body p{
     text-align: center;
 }
@@ -90,4 +103,29 @@ body, html{
 button:hover, #bot_button:hover{
     cursor: pointer;
     background-color: khaki;
+}
+
+/*Bot Messages*/
+.user_message, .bot_message{
+    width: 67%;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin: auto;
+    margin-top:5px;
+    margin-bottom: 10px;
+}
+
+.user_message{
+    background-color: greenyellow;
+    margin-right: 0px;
+}
+  
+.bot_message{
+    background-color: beige;
+    margin-left: 5px;
+}
+
+#user_point{
+    display: none;
 }

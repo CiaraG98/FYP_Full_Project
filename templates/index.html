@@ -2,54 +2,94 @@
 <html>
     <head>
         <title>I'm a Celebrity</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
         <link href={{ url_for('static', filename='css/styles.css') }} rel="stylesheet"/>
     </head>
     <body>
         <div id='WebContainer'>
+            <!--Header-->
             <header id='page_header'>
                 <img src="/static/images/logo.png" alt="tcd logo" id="tcdLogo">
                 <div id='title'>I'm a Celebrity</div>
             </header>
-            <button id='bot_button' onclick="invokeBot()">Get Bot Personality</button>
+            <button v-on:click="invoke_bot" id='bot_button'>Get Bot Personality</button>
+            <i class="fas fa-spinner"></i>
+            <!--Bot-->
             <div id='bot_frame'>
                 <div id='bot_body'>
-                    <p id='bot_txt'></p>
-                    <span id='bot_reply'></span>
+                    <div id='messages'></div>
                 </div>
                 <div id='user_input'>
-                    <input type='text' id='input'>
-                    <button id='send' onclick="reply_to_bot()">Send</button>
+                    <input v-model='bot_input' id='input' placeholder="Send Message">
+                    <button v-on:click="reply_to_bot" id='send'>Send</button>
                 </div>
             </div>
+            <p>{{input}}</p>
         </div>
         <script>
+            var app = new Vue({
+                el: '#WebContainer',
+                data: {
+                    bot_input: '',
+                },
+                methods: {
+                    invoke_bot: invokeBot,
+                    reply_to_bot: reply_to_bot,
+                    append_messages: append_messages
+                }
+            });
+
             function invokeBot(){
                 console.log("invokeBot Called...");
                 fetch('/invoke_bot').then(function(response){
                     return response.json();
                 }).then(function(json){
                     console.log(json);
-                    let txt = document.getElementById("bot_reply");
-                    txt.innerHTML = json.persona;
-                })
+                    append_messages(json.persona, true);
+                });
             }
 
             function reply_to_bot(){
                 console.log("reply called...");
-                reply_txt = document.getElementById("input").value;
+                append_messages(this.bot_input, false);
                 fetch('/reply_to_bot', {
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     method: 'POST',
                     body: JSON.stringify({
-                        "user_reply" : reply_txt
+                        "user_reply" : this.bot_input
                     })
                 }).then(function(response){
                     return response.json();
                 }).then(function(json){
                     console.log(json);
                 });
+            }
+
+            function append_messages(text, isBot){
+                console.log("append called...");
+                let messages = document.getElementById("messages");
+                let new_message = document.createElement("div");
+                let newP = document.createElement("p");
+                let newSpan = document.createElement("span");
+                let pointEnd = document.createElement("span");
+                new_message.setAttribute("class", "message_parent");
+                if(isBot){
+                    newP.setAttribute("class", "bot_message");
+                    pointEnd.setAttribute("id", "bot_point");
+                }
+                else{
+                    newP.setAttribute("class", "user_message");
+                    pointEnd.setAttribute("id", "user_point");
+                }
+                newSpan.setAttribute("class", "this_message");
+                newSpan.innerHTML = text;
+                newP.appendChild(newSpan);
+                newP.appendChild(pointEnd);
+                new_message.appendChild(newP);
+                messages.appendChild(new_message);
+                console.log("Append complete");
             }
         </script>
     </body>

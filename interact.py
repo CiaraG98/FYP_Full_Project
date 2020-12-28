@@ -16,6 +16,13 @@ from transformers import OpenAIGPTLMHeadModel, OpenAIGPTTokenizer, GPT2LMHeadMod
 from train import SPECIAL_TOKENS, build_input_from_segments, add_special_tokens_
 from utils import get_dataset, download_pretrained_model
 
+tokenizer = None
+model = None
+args = None
+history = []
+personality = None
+
+
 def top_filtering(logits, top_k=0., top_p=0.9, threshold=-float('Inf'), filter_value=-float('Inf')):
     """ Filter a distribution of logits using top-k, top-p (nucleus) and/or threshold filtering
         Args:
@@ -122,8 +129,9 @@ def run():
     	torch.cuda.manual_seed(args.seed)
 
 
+    # Fine-Tuning
     logger.info("Get pretrained model and tokenizer")
-    tokenizer_class, model_class = (GPT2Tokenizer, GPT2LMHeadModel) if args.model == 'gpt2' else (OpenAIGPTTokenizer, OpenAIGPTLMHeadModel)
+    tokenizer_class, model_class = (OpenAIGPTTokenizer, OpenAIGPTLMHeadModel)
     tokenizer = tokenizer_class.from_pretrained(args.model_checkpoint)
     model = model_class.from_pretrained(args.model_checkpoint)
     model.to(args.device)
@@ -134,13 +142,25 @@ def run():
     personalities = [dialog["personality"] for dataset in dataset.values() for dialog in dataset]
     personality = random.choice(personalities)
     #logger.info("Selected personality: %s", tokenizer.decode(chain(*personality)))
-
     return tokenizer.decode(chain(*personality))
+ 
 
 # Me editing
 def reply(input_text):
-    print(input_text)
-    return "DummyReply"
+    history.append(tokenizer.encode(input_text))
+    with torch.no_grad():
+        # GETTING REPLY
+        out_ids = sample_sequence(personality, history, tokenizer, model, args)
+    history.append(out_ids)
+    history = history[-(2*args.max_history+1):]
+    out_text = tokenizer.decode(out_ids, skip_special_tokens=True)
+    return out_text
+
+"""
+if __name__ == "__main__":
+    run()
+"""
+
     """
     history = []
     while True:
@@ -150,6 +170,7 @@ def reply(input_text):
             raw_text = input(">>> ")
         history.append(tokenizer.encode(raw_text))
         with torch.no_grad():
+            # GETTING REPLY
             out_ids = sample_sequence(personality, history, tokenizer, model, args)
         history.append(out_ids)
         history = history[-(2*args.max_history+1):]
@@ -158,5 +179,3 @@ def reply(input_text):
         #print(out_text)
 
 """
-if __name__ == "__main__":
-    run()
