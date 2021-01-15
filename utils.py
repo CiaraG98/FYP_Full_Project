@@ -32,12 +32,13 @@ def get_dataset(tokenizer, dataset_path, dataset_cache):
     """ Get tokenized PERSONACHAT dataset from S3 or cache."""
     dataset_path = dataset_path or PERSONACHAT_URL
     dataset_cache = dataset_cache + '_' + type(tokenizer).__name__  # To avoid using GPT cache for GPT-2 and vice-versa
+    # may not need if file is on machine, might need to store it for deployment
     if dataset_cache and os.path.isfile(dataset_cache):
         logger.info("Load tokenized dataset from cache at %s", dataset_cache)
         dataset = torch.load(dataset_cache)
     else:
         logger.info("Download dataset from %s", dataset_path)
-        personachat_file = cached_path(dataset_path)
+        personachat_file = cached_path(dataset_path) # from transformers import cached_path
         with open(personachat_file, "r", encoding="utf-8") as f:
             dataset = json.loads(f.read())
 

@@ -12,9 +12,12 @@ bearer_token = 'AAAAAAAAAAAAAAAAAAAAABNDKgEAAAAAx7i7gCsEItSD4glnaw%2BCfuFh0Ok%3D
 tweetsPerQuery = 100
 maxTweets = 1000
 hashtag = ''
-userId = 'ArianaGrande'
+userId = 'DavidDobrik'
 users = ['realDonaldTrump', 'Cristiano', 'DavidDobrik',
          'KimKardashian', 'rihanna', 'ArianaGrande']
+
+# Justin Bieber, tom holland,...., bts
+# Singers, well-known peeps, actors, social media/youtube
 
 #  Authentication
 auth = tweepy.OAuthHandler(consumer_key, consumer_key_secret)

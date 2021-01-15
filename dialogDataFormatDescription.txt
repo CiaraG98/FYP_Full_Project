@@ -1,0 +1,68 @@
+Format of Dialog Dataset
+JSON/Python Dict
+
+dataset keys ==> train, valid
+dataset = {'train': [], 'valid': []}, 17,000 personas in train, 1000 in valid
+train & valid ==> list of personalities, each personality in a single indexed list
+
+train & valid have keys ==> persona, utterances
+Persona: one list of 5ish sentences
+utterances: list of around 7/8 dicts, each has keys ==> 'candidates' and 'history' 
+
+candidates ==> list of sentences, around 20
+history ==> list of sentences, around 1 at start, ends with 13, increases each index
+
+valid ==> same format, probably for testing, may not need to create one
+
+dataset = {'train': [[{'personality': [...], 'utterances': [{'candidates': [...], 
+	'history': [...]}, {'candidates': [...], 'history': [...]}]}]], 
+	'valid': ...}
+
+
+{'personality': ['i like to remodel homes .', 'i like to go hunting .', 
+'i like to shoot a bow .', 'my favorite holiday is halloween .'], 'utterances': 
+[{'candidates': ['my mom was single with 3 boys , so we never left the projects .', 
+'i try to wear all black every day . it makes me feel comfortable .', 
+'well nursing stresses you out so i wish luck with sister', 
+'yeah just want to pick up nba nfl getting old', 
+'i really like celine dion . what about you ?', 'no . i live near farms .', 
+"i wish i had a daughter , i'm a boy mom . they're beautiful boys though still lucky", 
+'yeah when i get bored i play gone with the wind my favorite movie .', "hi how are you ? i'm eating dinner with my hubby and 2 kids .", 'were you married to your high school sweetheart ? i was .', 'that is great to hear ! are you a competitive rider ?', "hi , i'm doing ok . i'm a banker . how about you ?", "i'm 5 years old", 'hi there . how are you today ?', 'i totally understand how stressful that can be .', 'yeah sometimes you do not know what you are actually watching', 'mother taught me to cook ! we are looking for an exterminator .', 'i enjoy romantic movie . what is your favorite season ? mine is summer .', 'editing photos takes a lot of work .', 'you must be very fast . hunting is one of my favorite hobbies .'], 'history': ["hi , how are you doing ? i'm getting ready to do some cheetah chasing to stay in shape ."]},
+
+*sentences appended to history do not come from candidates
+*2/3 sentences added each time
+
+Where is this used in the other python files:
+> Utils.py 
+file url PERSONACHAT_URL
+get_dataset:
+downloads data or loads it in cache if already downloaded
+reads it with json.loads()
+tokenizes and encodes it 
+
+> Train.py
+imports get_dataset from utils
+get_data_loaders:
+uses get_dataset
+prepares dialogs for training & evaluation
+returns train & valid loader & sampler
+used in train function
+
+> Intertact.py
+imports get_dataset
+uses it to select personality
+
+Notes...
+This bot has already been trained on dialog when the code is sourced.
+Running interact.py the first time downloads the pretrained model.
+After that it just loads the model from its cache.
+Would need to build dialog dataset and train it on my machine.
+possibly then store trained model e.g. on S3 so that when the interface is loaded,
+it doesn't have to train it each time the website is loaded. 
+
+What to do with...
+> tweets with https links
+> tweets with a lot of @
+
+7 dicts * 20 candidate sentences each => 140 candidate sentences per persona
+ 	
