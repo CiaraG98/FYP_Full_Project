@@ -11,50 +11,52 @@ bearer_token = 'AAAAAAAAAAAAAAAAAAAAABNDKgEAAAAAx7i7gCsEItSD4glnaw%2BCfuFh0Ok%3D
 # For Request
 tweetsPerQuery = 100
 maxTweets = 1000
-hashtag = ''
-userId = 'DavidDobrik'
-users = ['realDonaldTrump', 'Cristiano', 'DavidDobrik',
-         'KimKardashian', 'rihanna', 'ArianaGrande']
+
+users = ['KylieJenner', 'lizakoshy', 'elonmusk', 'Harry_Styles']
+#users = ['realDonaldTrump', 'Cristiano', 'DavidDobrik', 'KylieJenner', 'lizakoshy', 'elonmusk'
+ #        'KimKardashian', 'rihanna', 'ArianaGrande', 'Harry_Styles']
 
 # Justin Bieber, tom holland,...., bts
 # Singers, well-known peeps, actors, social media/youtube
+# Kylie Jenner, Harry Styles, Liza Koshy, Elon Musk
 
 #  Authentication
 auth = tweepy.OAuthHandler(consumer_key, consumer_key_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
-# Crawling Data
-print("working on", userId)
-all_tweets = []
-tweets = api.user_timeline(screen_name=userId, cound=200, include_rts=False, tweet_mode="extended")
-"""
-    for info in tweets[:3]:
-        print("ID {}".format(info.id))
-        print(info.created_at)
-        print(info.full_text)
-        print("\n")
+for userId in users:
+    # Crawling Data
+    print("working on", userId)
+    all_tweets = []
+    tweets = api.user_timeline(screen_name=userId, cound=200, include_rts=False, tweet_mode="extended")
     """
-all_tweets.extend(tweets)
-old_id = tweets[-1].id
-while True:
-    try:
-        tweets = api.user_timeline(screen_name=userId, cound=200, include_rts=False, max_id=old_id-1, tweet_mode="extended")
-        if len(tweets) == 0:
-            break
-        old_id = tweets[-1].id
-        all_tweets.extend(tweets)
-        if len(all_tweets) >= 3000:
-            break
-        print("N of tweets download till now {}".format(len(all_tweets)))
+        for info in tweets[:3]:
+            print("ID {}".format(info.id))
+            print(info.created_at)
+            print(info.full_text)
+            print("\n")
+        """
+    all_tweets.extend(tweets)
+    old_id = tweets[-1].id
+    while True:
+        try:
+            tweets = api.user_timeline(screen_name=userId, cound=200, include_rts=False, max_id=old_id-1, tweet_mode="extended")
+            if len(tweets) == 0:
+                break
+            old_id = tweets[-1].id
+            all_tweets.extend(tweets)
+            if len(all_tweets) >= 3000:
+                break
+            print("N of tweets download till now {}".format(len(all_tweets)))
 
-    except tweepy.TweepError:
-        print("TweepError wait...")
-        time.sleep(120)
+        except tweepy.TweepError:
+            print("TweepError wait...")
+            time.sleep(120)
 
-# Write to csv file
-outtweets = [[tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8").decode("utf-8")] for idx, tweet in enumerate(all_tweets)]
-df = DataFrame(outtweets, columns=["id", "created_at", "text"])
-df.to_csv("celeb_data/%s_tweets.csv" % userId, index=False)
-# df.to_csv("test_tweets.csv", index=False, encoding='utf-8')
-df.head(3)
+    # Write to csv file
+    outtweets = [[tweet.id_str, tweet.created_at, tweet.full_text.encode("utf-8").decode("utf-8")] for idx, tweet in enumerate(all_tweets)]
+    df = DataFrame(outtweets, columns=["id", "created_at", "text"])
+    df.to_csv("celeb_data/%s_tweets.csv" % userId, index=False)
+    # df.to_csv("test_tweets.csv", index=False, encoding='utf-8')
+    df.head(3)
