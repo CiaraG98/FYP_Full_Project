@@ -30,6 +30,7 @@ for file in sorted(os.listdir(celebs)):
     # testing reading in tweets
     df = pd.read_csv(file)
     data = df.to_dict('records')
+    random.shuffle(data)
 
     # testing building dataset
     test_persona1 = ['i was on tv', 'i have red hair', 'i love long jumpers', 'my favourite thing to do is cook', 
@@ -62,8 +63,9 @@ for file in sorted(os.listdir(celebs)):
         utterances.append(this_utterance)
 
 
-    this_persona = [{'personality': test_persona1, 'utterances': utterances}]
+    this_persona = {'personality': test_persona1, 'utterances': utterances}
     dialog_dataset['train'].append(this_persona)
+    dialog_dataset['valid'].append(this_persona)
 
 
 with open("celebs_dialog_dataset.json", 'w', encoding='utf-8') as f:
