@@ -2,29 +2,32 @@
 <html>
     <head>
         <title>I'm a Celebrity</title>
+        <script src="https://kit.fontawesome.com/d539734335.js" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
         <link href={{ url_for('static', filename='css/styles.css') }} rel="stylesheet"/>
     </head>
     <body>
         <div id='WebContainer'>
             <!--Header-->
-            <header id='page_header'>
-                <img src="/static/images/logo.png" alt="tcd logo" id="tcdLogo">
-                <div id='title'>I'm a Celebrity</div>
-            </header>
-            <button v-on:click="invoke_bot" id='bot_button'>Get Bot Personality</button>
-            <i class="fas fa-spinner"></i>
-            <!--Bot-->
+            <img src="/static/images/logo.png" alt="tcd logo" id="tcdLogo">
+            <div id='title'>I'm a Celebrity</div>
+            <button v-on:click="invoke_bot" id='bot_button'>Get Bot Personality <i class="fas fa-brain"></i></button>
+            <button v-on:click="start_bot" id='start_button'>Start Bot <i class="fas fa-robot"></i></button>
+            <button v-on:click="show_about" id='a_button'>About <i class="fas fa-book-open"></i></button>
+            <button v-on:click="show_instructions" id='i_button'>Instructions <i class="fas fa-info-circle"></i></button>
+            <div id='popup'>Popup</div>
+            <!--Bot Start-->
             <div id='bot_frame'>
                 <div id='bot_body'>
                     <div id='messages'></div>
                 </div>
                 <div id='user_input'>
                     <input v-model='bot_input' id='input' placeholder="Send Message">
-                    <button v-on:click="reply_to_bot" id='send'>Send</button>
+                    <button v-on:click="reply_to_bot" id='send'><i class="fas fa-chevron-circle-right"></i></button>
                 </div>
             </div>
-            <p>{{input}}</p>
+            <!--Bot End-->
         </div>
         <script>
             var app = new Vue({
@@ -33,11 +36,22 @@
                     bot_input: '',
                 },
                 methods: {
+                    start_bot: startBot,
                     invoke_bot: invokeBot,
                     reply_to_bot: reply_to_bot,
                     append_messages: append_messages
                 }
             });
+
+            function startBot(){
+                console.log("Starting Bot...");
+                fetch('/start_bot').then(function(response){
+                    return response.json();
+                }).then(function(json){
+                    console.log(json);
+                    append_messages("I'm ready! Get me a personality.", true);
+                });
+            }
 
             function invokeBot(){
                 console.log("invokeBot Called...");
@@ -90,8 +104,16 @@
                 newP.appendChild(pointEnd);
                 new_message.appendChild(newP);
                 messages.appendChild(new_message);
-                console.log("Append complete");
+                $("#bot_body").animate({ scrollTop: $("#bot_body")[0].scrollHeight }, 200);
             }
+
+            let input = document.getElementById('input');
+            input.addEventListener("keyup", function(event){
+                if(event.keyCode === 13){
+                    document.getElementById('send').click();
+                    input.value = "";
+                }
+            })
         </script>
     </body>
 </html>
