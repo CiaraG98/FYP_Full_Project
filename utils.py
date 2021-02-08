@@ -13,7 +13,9 @@ import torch
 
 from transformers import cached_path
 
-PERSONACHAT_URL = "https://s3.amazonaws.com/datasets.huggingface.co/personachat/personachat_self_original.json"
+#PERSONACHAT_URL = "https://s3.amazonaws.com/datasets.huggingface.co/personachat/personachat_self_original.json"
+PERSONACHAT_URL = "./celebs_dialog_dataset.json"
+
 HF_FINETUNED_MODEL = "https://s3.amazonaws.com/models.huggingface.co/transfer-learning-chatbot/gpt_personachat_cache.tar.gz"
 
 logger = logging.getLogger(__file__)
@@ -32,7 +34,9 @@ def get_dataset(tokenizer, dataset_path, dataset_cache):
     """ Get tokenized PERSONACHAT dataset from S3 or cache."""
     dataset_path = dataset_path or PERSONACHAT_URL
     dataset_cache = dataset_cache + '_' + type(tokenizer).__name__  # To avoid using GPT cache for GPT-2 and vice-versa
-    # may not need if file is on machine, might need to store it for deployment
+    print("PATH:", dataset_path)
+    print("CACHE:", dataset_cache)
+    # Me: may not need if file is on machine, might need to store it for deployment
     if dataset_cache and os.path.isfile(dataset_cache):
         logger.info("Load tokenized dataset from cache at %s", dataset_cache)
         dataset = torch.load(dataset_cache)

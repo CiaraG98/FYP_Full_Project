@@ -1,7 +1,8 @@
 import tweepy
 from pandas import DataFrame
 import time
-# Credentials
+
+# Twitter Credentials
 consumer_key = 'riiUgzG0nHSkUGt5c521LgcnD'
 consumer_key_secret = 'XkNvxIyc83Y2t1TS3TzELFmDR9ek5pHrpPUpU3W1K9oGuGBNGP'
 access_token = '710798343623073792-tNUupkHcBd4WhfqaeKfDA9vhW19lAEC'
@@ -30,13 +31,7 @@ for userId in users:
     print("working on", userId)
     all_tweets = []
     tweets = api.user_timeline(screen_name=userId, cound=200, include_rts=False, tweet_mode="extended")
-    """
-        for info in tweets[:3]:
-            print("ID {}".format(info.id))
-            print(info.created_at)
-            print(info.full_text)
-            print("\n")
-        """
+
     all_tweets.extend(tweets)
     old_id = tweets[-1].id
     while True:

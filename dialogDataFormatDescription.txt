@@ -59,6 +59,7 @@ After that it just loads the model from its cache.
 Would need to build dialog dataset and train it on my machine.
 possibly then store trained model e.g. on S3 so that when the interface is loaded,
 it doesn't have to train it each time the website is loaded. 
+Train model and keep in directory, when deployed its there, no S3 needed 
 
 What to do with...
 > tweets with https links

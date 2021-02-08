@@ -19,6 +19,16 @@ dataset = {'train': [[{'personality': [...], 'utterances': [{'candidates': [...]
 """
 celebs = "./celeb_data"
 dialog_dataset = {'train': [], 'valid': []}
+PERSONA_DICT = {'ArianaGrande_tweets': ['I love my fans so much', 'dancing in high heals is tough',
+                'life is beautiful', 'Music is my biggest passion'], 
+                'Harry_Styles_tweets': ['test', 'test', 'this is a test', 'i love tests'], 
+                'KimKardashian_tweets': ['I am Armenian, so of course I am obsessed with laser hair removal.', 
+                'I have never used my pool', 'when i gain a pound its in the headlines', "i don't talk about money"],
+                'KylieJenner_tweets': ['I take, like, 500 selfies to get one I like', "I just don't like the airport. It scares me", 
+                "My oldest sister is bossy, my brother is a stirrer and me- we’ll I’m perfect.", "I don’t really regret anything."], 
+                'realDonaldTrump_tweets': ['I love America', 'I won the election', 'Diet coke is my favourite drink', 
+                'Make America great again', 'I am the best'], 
+                'rihanna_tweets': ['test', 'test', 'this is a test', 'i love tests']}
 HISTORY_APPENDS = 2
 CANDIDATES_LEN = 20
 NUMBER_OF_DICTS = 7
@@ -26,15 +36,15 @@ NUMBER_OF_DICTS = 7
 # Loop through files
 for file in sorted(os.listdir(celebs)):
     print("Working on", file)
+    this_celeb = file[:len(file)-4]
     file = celebs + '/' + file
+    
     # testing reading in tweets
     df = pd.read_csv(file)
     data = df.to_dict('records')
     random.shuffle(data)
 
     # testing building dataset
-    test_persona1 = ['i was on tv', 'i have red hair', 'i love long jumpers', 'my favourite thing to do is cook', 
-    'i have two dogs']
     history = ['hi! how are you doing?']
     utterances = []
 
@@ -62,8 +72,8 @@ for file in sorted(os.listdir(celebs)):
         this_utterance['history'] = this_history
         utterances.append(this_utterance)
 
-
-    this_persona = {'personality': test_persona1, 'utterances': utterances}
+    celeb_persona = PERSONA_DICT[this_celeb]
+    this_persona = {'personality': celeb_persona, 'utterances': utterances}
     dialog_dataset['train'].append(this_persona)
     dialog_dataset['valid'].append(this_persona)
 
