@@ -2,18 +2,28 @@ from flask import Flask, redirect, url_for, render_template, jsonify, request
 from interact import get_personality, reply, initialise
 
 app = Flask(__name__)
-tokenizer, model, args, history = initialise()
+tokenizer = None
+model = None
+args = None
+history = None
 personality = None
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
-@app.route("/hello", methods=['GET'])
-def hello():
-    #GET req
-    message = {'greeting': 'Hello from Flask!'}
-    return jsonify(message)
+@app.route("/start_bot", methods=['GET'])
+def start_bot():
+    global tokenizer
+    global model
+    global args
+    global history
+    tokenizer, model, args, history = initialise()
+    if tokenizer != None:
+        message = {'status': "Bot Successfully Started"}
+        return jsonify(message)
+    else:
+        return jsonify({"status": "Problem Starting Bot"})
 
 @app.route("/invoke_bot", methods=['GET'])
 def invoke_bot():
@@ -29,13 +39,6 @@ def reply_to_bot():
         bot_reply = reply(input["user_reply"], tokenizer, history, personality, model, args)
         return jsonify({'reply': bot_reply})
 
-@app.route("/<name>")
-def user(name):
-    return f"Hello {name}"
-
-@app.route("/admin")
-def admin():
-    return redirect(url_for("user", name="Admin!"))
 
 if __name__ == "__main__":
     app.run()
