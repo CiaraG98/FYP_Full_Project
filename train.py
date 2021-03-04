@@ -71,10 +71,11 @@ def build_input_from_segments(persona, history, reply, tokenizer, lm_labels=Fals
 def get_data_loaders(args, tokenizer):
     """ Prepare the dataset for training and evaluation """
     personachat = get_dataset(tokenizer, args.dataset_path, args.dataset_cache)
-
+    
     logger.info("Build inputs and labels")
     datasets = {"train": defaultdict(list), "valid": defaultdict(list)}
     for dataset_name, dataset in personachat.items():
+        print(dataset_name)
         num_candidates = len(dataset[0]["utterances"][0]["candidates"])
         if args.num_candidates > 0 and dataset_name == 'train':
             num_candidates = min(args.num_candidates, num_candidates)
@@ -140,6 +141,8 @@ def train():
     logging.basicConfig(level=logging.INFO if args.local_rank in [-1, 0] else logging.WARN)
     logger.warning("Running process %d", args.local_rank)  # This is a logger.warning: it will be printed by all distributed processes
     logger.info("Arguments: %s", pformat(args))
+
+    print("DEVICE:", args.device)
 
     # Initialize distributed training if needed
     args.distributed = (args.local_rank != -1)
