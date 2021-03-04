@@ -13,7 +13,7 @@ bearer_token = 'AAAAAAAAAAAAAAAAAAAAABNDKgEAAAAAx7i7gCsEItSD4glnaw%2BCfuFh0Ok%3D
 tweetsPerQuery = 100
 maxTweets = 1000
 
-users = ['KylieJenner', 'lizakoshy', 'elonmusk', 'Harry_Styles']
+users = ['shanedawson', 'Zendaya', 'justinbieber']
 #users = ['realDonaldTrump', 'Cristiano', 'DavidDobrik', 'KylieJenner', 'lizakoshy', 'elonmusk'
  #        'KimKardashian', 'rihanna', 'ArianaGrande', 'Harry_Styles']
 
