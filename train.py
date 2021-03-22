@@ -122,8 +122,8 @@ def train():
     parser.add_argument("--model_checkpoint", type=str, default="openai-gpt", help="Path, url or short name of the model")
     parser.add_argument("--num_candidates", type=int, default=2, help="Number of candidates for training")
     parser.add_argument("--max_history", type=int, default=2, help="Number of previous exchanges to keep in history")
-    parser.add_argument("--train_batch_size", type=int, default=2, help="Batch size for training")
-    parser.add_argument("--valid_batch_size", type=int, default=2, help="Batch size for validation")
+    parser.add_argument("--train_batch_size", type=int, default=4, help="Batch size for training")
+    parser.add_argument("--valid_batch_size", type=int, default=4, help="Batch size for validation")
     parser.add_argument("--gradient_accumulation_steps", type=int, default=8, help="Accumulate gradients on several steps")
     parser.add_argument("--lr", type=float, default=6.25e-5, help="Learning rate")
     parser.add_argument("--lm_coef", type=float, default=1.0, help="LM loss coefficient")
@@ -183,7 +183,7 @@ def train():
             input_ids, token_type_ids=token_type_ids, mc_token_ids=mc_token_ids,
             mc_labels=mc_labels, lm_labels=lm_labels
         )
-        loss = (lm_loss * args.lm_coef + mc_loss * args.mc_coef) / args.gradient_accumulation_steps
+        loss = float((lm_loss * args.lm_coef + mc_loss * args.mc_coef) / args.gradient_accumulation_steps)
         if args.fp16:
             with amp.scale_loss(loss, optimizer) as scaled_loss:
                 scaled_loss.backward()
