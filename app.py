@@ -25,8 +25,8 @@ def start_bot():
     else:
         return jsonify({"status": "Problem Starting Bot"})
 
-@app.route("/invoke_bot", methods=['GET'])
-def invoke_bot():
+@app.route("/get_persona", methods=['GET'])
+def get_persona():
     global personality
     persona, personality = get_personality(tokenizer, args)
     message = {'persona': persona}

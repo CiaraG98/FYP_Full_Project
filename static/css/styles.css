@@ -19,8 +19,7 @@ body, html{
     position: absolute;
 }
 #title{
-    width: 30%;
-    border-style: ;
+    width: 40%;
     text-align: center;
     margin: auto;
     margin-top: 8px;
@@ -36,8 +35,8 @@ body, html{
     border: none;
     background-color: darkslategrey; 
     float: left;
-    margin-top: 50px;
-    margin-left: 200px;
+    margin-top: 100px;
+    margin-left: 15%;
     position: absolute;
     font-size: 15px;
     font-family: Helvetica;
@@ -51,8 +50,8 @@ body, html{
     outline: none;
     border: none;
     background-color:darkslategrey; 
-    margin-top: 50px;
-    right: 200px;
+    margin-top: 100px;
+    right: 15%;
     position: absolute;
     font-size: 15px;
     font-family: Helvetica;
@@ -60,7 +59,7 @@ body, html{
 }
 
 #bot_button, #i_button{
-    margin-top: 150px;
+    margin-top: 250px;
 }
 
 
@@ -75,7 +74,7 @@ body, html{
     width: 33%;
     height: 74%;
     background-color: #7B241C;
-    margin-left: 32%;
+    margin-left: 33%;
     margin-top: 25px;
     border-radius: 10px;
     padding: 8px;
@@ -134,12 +133,6 @@ body, html{
     border: none;
     font-size: 15px;
 }
-
-#send:hover{
-    cursor: pointer;
-}
-
-
 /*Bot Messages*/
 .user_message, .bot_message{
     width: 67%;
@@ -149,16 +142,15 @@ body, html{
     margin: auto;
     margin-top:5px;
     margin-bottom: 10px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .user_message{
-    background-color: greenyellow;
+    background-color: lightskyblue;
     margin-right: 0px;
 }
   
 .bot_message{
-    background-color:beige;
+    background-color:slategrey;
     margin-left: 5px;
 }
 
@@ -179,4 +171,25 @@ body, html{
     text-align: center;
     padding: 10px;
     display: none;
+}
+
+@media only screen and (max-width: 768px){
+    #bot_button, #start_button{
+        margin-left: 5%;
+        width: 15%;
+        font-size: 14px;    
+    }
+    #a_button, #i_button{
+        width: 15%;
+        font-size: 14px;
+        right: 4%;   
+    }
+    #bot_frame{
+        margin-left: 25%;
+        width: 50%;
+    }
+}
+
+@media only screen and (max-width: 900px){
+
 }

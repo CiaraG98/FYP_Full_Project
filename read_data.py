@@ -20,23 +20,23 @@ dataset = {'train': [[{'personality': [...], 'utterances': [{'candidates': [...]
 celebs = "./celeb_data"
 dialog_dataset = {'train': [], 'valid': []}
 PERSONA_DICT = {
-                'ArianaGrande_tweets': ['I love my fans so much', 'dancing in high heals is tough',
-                'life is beautiful', 'Music is my biggest passion'], 
+                'ArianaGrande_tweets': ['I love my fans so much.', 'Dancing in high heals is tough.',
+                'Life is beautiful.', 'Music is my biggest passion.'], 
 
-                'KimKardashian_tweets': ['I am Armenian, so of course I am obsessed with laser hair removal.', 
-                'I have never used my pool', 'when i gain a pound its in the headlines', "i don't talk about money"],
+                'KimKardashian_tweets': ['I am Armenian.', 'I have never used my pool.', 'When I gain a pound its in the headlines.', 
+                "I don't talk about money."],
 
-                'KylieJenner_tweets': ['I take, like, 500 selfies to get one I like', "I just don't like the airport. It scares me", 
-                "My oldest sister is bossy, my brother is a stirrer and me- we’ll I’m perfect.", "I don’t really regret anything."], 
+                'KylieJenner_tweets': ['I take 500 selfies to get one I like.', "The airport scares me.", 
+                "My oldest sister is bossy, my brother is a stirrer.", "I don’t really regret anything."], 
 
-                'realDonaldTrump_tweets': ['I will have Mexico pay for that wall.', 'I won the election, by a lot', 'Diet coke is my favourite drink', 
-                'Make America great again', 'Man, we could use a big fat dose of global warming'], 
+                'realDonaldTrump_tweets': ['I will have Mexico pay for that wall.', 'I won the election, by a lot.', 'Diet coke is my favourite drink.', 
+                'Make America great again.', 'Man, we could use a big fat dose of global warming.'], 
 
-                'shanedawson_tweets': ['I want to know the psychology of a YouTuber', 'I started making videos when I was, like, seven or eight.',
-                'Anybody could be a sociopath. Anybody.', 'I know what I do for a living is ridiculous.', 
+                'shanedawson_tweets': ['I want to know the psychology of a YouTuber.', 'I started making videos when I was seven or eight.',
+                'Anybody could be a sociopath.', 'I know what I do for a living is ridiculous.', 
                 'There is nothing creepier to me than a student who hangs out with the teachers.'],
 
-                'Zendaya_tweets': ["I'm a Virgo, and I know what I like.", 'I use my platform as a tool and a way to speak about greater change.',
+                'Zendaya_tweets': ["I'm a Virgo.", 'I use my platform as a tool and a way to speak about greater change.',
                 'I love singing and would love to record an album at some point.', "I've always grown up around theater.", 
                 "I'm a chocolate addict."],
                 

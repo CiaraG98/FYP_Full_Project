@@ -9,10 +9,10 @@
     </head>
     <body>
         <div id='WebContainer'>
-            <!--Header-->
+            <!--Header & Buttons-->
             <img src="/static/images/logo.png" alt="tcd logo" id="tcdLogo">
             <div id='title'>I'm a Celebrity</div>
-            <button v-on:click="invoke_bot" id='bot_button'>Get Bot Personality <i class="fas fa-brain"></i></button>
+            <button v-on:click="get_persona" id='bot_button'>Get Personality <i class="fas fa-brain"></i></button>
             <button v-on:click="start_bot" id='start_button'>Start Bot <i class="fas fa-robot"></i></button>
             <button v-on:click="show_about" id='a_button'>About <i class="fas fa-book-open"></i></button>
             <button v-on:click="show_instructions" id='i_button'>Instructions <i class="fas fa-info-circle"></i></button>
@@ -34,16 +34,18 @@
                 el: '#WebContainer',
                 data: {
                     bot_input: '',
+                    bot_initialised: false,
                 },
                 methods: {
                     start_bot: startBot,
-                    invoke_bot: invokeBot,
+                    get_persona: get_persona,
                     reply_to_bot: reply_to_bot,
                     append_messages: append_messages
                 }
             });
 
             function startBot(){
+                append_messages("Give me a second...", true);
                 console.log("Starting Bot...");
                 fetch('/start_bot').then(function(response){
                     return response.json();
@@ -53,14 +55,19 @@
                 });
             }
 
-            function invokeBot(){
-                console.log("invokeBot Called...");
-                fetch('/invoke_bot').then(function(response){
-                    return response.json();
-                }).then(function(json){
-                    console.log(json);
-                    append_messages(json.persona, true);
-                });
+            function get_persona(){
+                if(this.bot_initialised){
+                    console.log("get_persona Called...");
+                    fetch('/get_persona').then(function(response){
+                        return response.json();
+                    }).then(function(json){
+                        console.log(json);
+                        append_messages(json.persona, true);
+                    });
+                }
+                else{
+                    append_messages("Opps! You forgot to start me up. Please click 'Start Bot'.", true);
+                }
             }
 
             function reply_to_bot(){
@@ -107,13 +114,14 @@
                 $("#bot_body").animate({ scrollTop: $("#bot_body")[0].scrollHeight }, 200);
             }
 
+            //Send on Enter
             let input = document.getElementById('input');
             input.addEventListener("keyup", function(event){
                 if(event.keyCode === 13){
                     document.getElementById('send').click();
                     input.value = "";
                 }
-            })
+            });
         </script>
     </body>
 </html>
