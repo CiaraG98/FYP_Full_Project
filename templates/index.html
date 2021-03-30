@@ -53,9 +53,11 @@
                     console.log(json);
                     append_messages("I'm ready! Get me a personality.", true);
                 });
+                this.bot_initialised = true;
             }
 
             function get_persona(){
+                console.log(this.bot_initialised);
                 if(this.bot_initialised){
                     console.log("get_persona Called...");
                     fetch('/get_persona').then(function(response){

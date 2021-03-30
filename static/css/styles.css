@@ -142,15 +142,16 @@ body, html{
     margin: auto;
     margin-top:5px;
     margin-bottom: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .user_message{
-    background-color: lightskyblue;
+    background-color: greenyellow;
     margin-right: 0px;
 }
   
 .bot_message{
-    background-color:slategrey;
+    background-color:beige;
     margin-left: 5px;
 }
 
