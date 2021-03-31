@@ -16,7 +16,16 @@ from transformers import OpenAIGPTLMHeadModel, OpenAIGPTTokenizer, GPT2LMHeadMod
 from train import SPECIAL_TOKENS, build_input_from_segments, add_special_tokens_
 from utils import get_dataset, download_pretrained_model
 
-# Me editing
+PERSONA_KEYWORDS = {
+    "fans": "ariana",
+    "armenian": "kim",
+    "airport": "kylie",
+    "mexico": "trump",
+    "youtuber": "shane",
+    "virgo": "zendaya",
+    "humble": "justin"
+}
+
 def initialise():
     """Initialise onjects for model"""
     parser = ArgumentParser()
@@ -65,12 +74,19 @@ def initialise():
     history = []
     return tokenizer, model, args, history
 
+def get_persona_key(persona):
+    for p in PERSONA_KEYWORDS.keys():
+        if p in persona:
+            return PERSONA_KEYWORDS[p]
+
+
 def get_personality(tokenizer, args):
     dataset = get_dataset(tokenizer, args.dataset_path, args.dataset_cache)
     personalities = [dialog["personality"] for dataset in dataset.values() for dialog in dataset]
     personality = random.choice(personalities)
     #logger.info("Selected personality: %s", tokenizer.decode(chain(*personality)))
-    return tokenizer.decode(chain(*personality)), personality
+    persona_key = get_persona_key(tokenizer.decode(chain(*personality)))
+    return tokenizer.decode(chain(*personality)), personality, persona_key
 
 
 def reply(input_text, tokenizer, history, personality, model, args):

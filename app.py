@@ -28,8 +28,8 @@ def start_bot():
 @app.route("/get_persona", methods=['GET'])
 def get_persona():
     global personality
-    persona, personality = get_personality(tokenizer, args)
-    message = {'persona': persona}
+    persona, personality, key = get_personality(tokenizer, args)
+    message = {'persona': persona, 'key': key}
     return jsonify(message)
 
 @app.route("/reply_to_bot", methods=['POST', 'GET'])

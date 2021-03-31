@@ -16,21 +16,20 @@ from transformers import cached_path
 #PERSONACHAT_URL = "https://s3.amazonaws.com/datasets.huggingface.co/personachat/personachat_self_original.json"
 PERSONACHAT_URL = "./celebs_dialog_dataset.json"
 
-HF_FINETUNED_MODEL = "https://s3.amazonaws.com/models.huggingface.co/transfer-learning-chatbot/gpt_personachat_cache.tar.gz"
+#HF_FINETUNED_MODEL = "https://s3.amazonaws.com/models.huggingface.co/transfer-learning-chatbot/gpt_personachat_cache.tar.gz"
 CACHED_BOT = "./model_/2f5114b5eb72f9515802779c42c1b289bebdb1cfc8ce94c653237518eb530b34.75f2a4fe69178ff43138117a977e107a5fc7d402603a0825a296b531f246b3f2"
 logger = logging.getLogger(__file__)
+tempfile.tempdir = "./tempdir"
 
 def download_pretrained_model():
     """ Download and extract finetuned model from S3 """
     #resolved_archive_file = cached_path(HF_FINETUNED_MODEL)
     resolved_archive_file = CACHED_BOT
-    print("RAF: ", resolved_archive_file)
     tempdir = tempfile.mkdtemp()
+    print("TMP:", tempdir)
     logger.info("extracting archive file {} to temp dir {}".format(resolved_archive_file, tempdir))
     with tarfile.open(resolved_archive_file, 'r:gz') as archive:
         archive.extractall(tempdir)
-    
-    print("TMP:", tempdir)
     return tempdir
 
 

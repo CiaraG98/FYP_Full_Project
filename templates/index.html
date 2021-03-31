@@ -12,6 +12,7 @@
             <!--Header & Buttons-->
             <img src="/static/images/logo.png" alt="tcd logo" id="tcdLogo">
             <div id='title'>I'm a Celebrity</div>
+            <button v-on:click="show_answer_field" id="answer_button">Ready to Guess</button>
             <button v-on:click="get_persona" id='bot_button'>Get Personality <i class="fas fa-brain"></i></button>
             <button v-on:click="start_bot" id='start_button'>Start Bot <i class="fas fa-robot"></i></button>
             <button v-on:click="show_about" id='a_button'>About <i class="fas fa-book-open"></i></button>
@@ -35,6 +36,8 @@
                 data: {
                     bot_input: '',
                     bot_initialised: false,
+                    user_answer: '',
+                    current_key: ''
                 },
                 methods: {
                     start_bot: startBot,
@@ -43,6 +46,26 @@
                     append_messages: append_messages
                 }
             });
+            
+            let answers = {
+                "shane": ["Shane Dawson", "shane dawson"],
+                "ariana": ["Ariana Grande", "ariana grande"],
+                "trump": ["Donald Trump", "donald trump"],
+                "kim": ["Kim Kardashian", "kim kardashian"],
+                "kylie": ["Kylie Jenner", "kylie jenner"],
+                "zendaya": ["zendaya", "Zendaya"],
+                "justin": ["Justin Bieber", "justin bieber"]
+            };
+
+            function checkGuess(){
+                let options = answers[this.current_key];
+                for(a in options){
+                    if(this.user_answer == a){
+                        console.log("correct");
+                    }
+                }
+                console.log("incorrect");
+            }
 
             function startBot(){
                 append_messages("Give me a second...", true);
@@ -57,14 +80,15 @@
             }
 
             function get_persona(){
-                console.log(this.bot_initialised);
                 if(this.bot_initialised){
                     console.log("get_persona Called...");
                     fetch('/get_persona').then(function(response){
                         return response.json();
                     }).then(function(json){
                         console.log(json);
+                        this.current_key = json.key;
                         append_messages(json.persona, true);
+                        checkGuess();
                     });
                 }
                 else{
@@ -73,7 +97,6 @@
             }
 
             function reply_to_bot(){
-                console.log("reply called...");
                 append_messages(this.bot_input, false);
                 fetch('/reply_to_bot', {
                     headers: {
@@ -92,7 +115,6 @@
             }
 
             function append_messages(text, isBot){
-                console.log("append called...");
                 let messages = document.getElementById("messages");
                 let new_message = document.createElement("div");
                 let newP = document.createElement("p");
