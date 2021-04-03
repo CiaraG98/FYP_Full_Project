@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "im-a-celebrity-fyp",
+  "private_key_id": "f43156a391512055888ebe7bdc53ef6245b06bb9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDANl15kRKYiOdE\nErgoSjDWnEEeSkNdCLvmrugj2DJZpT8136EtTjjaniuvbHVHjtbVPXbMzZS1Iv1I\nIfedFkoUCMDkI8Ef29je8SDFEWetOmnRfqb7CqQaWKKqNfWzqCkludDJlfh8OP5E\nq2smRa4hlwXsyiJ4IhYNv9yKvOwu1r7itgIhGgH69/A5BYeMB8RbAyVJ1Yk7Zs5m\nRHmjFnq3I6J/4rdSSCjftNDkTnefmINg6sJPq7iqF0d643UYO9A+FTP1w+hiyWaG\ns3g//1sI3aiexQ2N0/Lk22an2DWf3EKDj5HNKSZbjK4uyLSu7ZM0LVglnjv2AKM5\njYaq8q4DAgMBAAECggEADbIyAe4OQFPiVW2XYA49TFAxAaqyrHKUClwkisf7z9B1\ntcMxaxbbopRKXO3NA47QNxHx9lD1y4cVO3++yEY6Jr2i76lZOF8ZenVTFke8YVG8\nEDib8bUbPAyxy+VxabOjTvQJG7wgdcrihLEe6Z4QdNtGiaNeRmd4tn0ZMWzvJWfP\nDG/UA10KVeEA0D0T/pYWcQo7IDFd8vR6VGUPlUs+EAAyNB8F288m3oPbtGCnciNp\nI4XuIAJUhXbpYnczRCkll/J7jFoaRI0u+/xW0p7jfyaLlSRiQ45DtfAXfnJ/23hL\n+odA53fOzQcgubmZkt26VjU4OUPXy9zkhf4cP6zcxQKBgQD51RZ23oPk58/Soe8Z\nTL4+q9BRGPS8tuoggJ8eiKDISpA5tRqhwCJ+x0R0yjOSlQ+OPgfTuOilfXlOsdor\niH7nxW1PUFxIL8S1fqfXnjAsBtWbYNsJ45hyTLeCyvsLFF7qm6VsA+CW4PRBnVzU\nUngZNYTqsMi1ju56e/b7WITDfQKBgQDE9SAeJhYSGNSM4TN0RLW54l0O/U+scHj9\noWkEwsHlOpfgBsBWZUIWgtKjz9KYzEkhyBd6WLepWwtKgqI452GqJR/Ujm+kJaLD\nS6OSSisE1LrHhNWuZ63xT7AtlZSBAbpQq43mAmdBCAs9XfR9VwY6A6cPkaW+/jCl\nMCneZSTvfwKBgG4fl39eJhVIeTsHVjV4toM5iOG2dmqY1irthzYWU4j2FQza35pc\n7tejTnGMj58VRX4Vqa2R3DrWTBp8GwcFa6sOQ1iqu4K2S6cU5TcN6338pTuQPfzl\n7dS0LE/i2TXRDOWtJgWuz9ix3/jsPHb6wyWZibVJp68gCc7DxeKU6jChAoGAYk8Y\nIPRRv+a08TzXOgmxy365hGncAu6A9dhDWyT7Mzfz5tZ32qfgPOw/x5RMQgh12G7P\niToPMnFHSYG7Bzw2+35cTPRrtTsz6tcuZi6vGlI0iLI9FjiaEgD8p0QqQ9pg7TM0\nOMKqV0N0mMT07Dsr2HlKQfMpEBRAo7NOsrs5nHECgYADP7AqoEPgMis+swFupYOI\nl1dO14NvJ+P6rtHyBxqE0gENWFb8iHK8n6uMcHHkyyp4KfQkS8wApc6nvbj6Fd2L\nIkCaox6XTJZQPysB6X31nAjgVXffL4WFPe7Ver1wkIY0DDucqNatvVMkZjlkWm+w\nYlGBI7YLOKmYzgPb7vDH+A==\n-----END PRIVATE KEY-----\n",
+  "client_email": "im-a-celebrity-fyp@appspot.gserviceaccount.com",
+  "client_id": "112125778957020314334",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/im-a-celebrity-fyp%40appspot.gserviceaccount.com"
+}

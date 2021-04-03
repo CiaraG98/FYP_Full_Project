@@ -13,22 +13,24 @@ import torch
 
 from transformers import cached_path
 
+from read_bucket import get_model
+
 #PERSONACHAT_URL = "https://s3.amazonaws.com/datasets.huggingface.co/personachat/personachat_self_original.json"
 PERSONACHAT_URL = "./celebs_dialog_dataset.json"
 
 #HF_FINETUNED_MODEL = "https://s3.amazonaws.com/models.huggingface.co/transfer-learning-chatbot/gpt_personachat_cache.tar.gz"
-CACHED_BOT = "./model_/2f5114b5eb72f9515802779c42c1b289bebdb1cfc8ce94c653237518eb530b34.75f2a4fe69178ff43138117a977e107a5fc7d402603a0825a296b531f246b3f2"
+#CACHED_BOT = "./model_/model.75f2a4fe69178ff43138117a977e107a5fc7d402603a0825a296b531f246b3f2"
+FINE_TUNED_BOT = "./tempdir/model_/model.75f2a4fe69178ff43138117a977e107a5fc7d402603a0825a296b531f246b3f2"
+
 logger = logging.getLogger(__file__)
 tempfile.tempdir = "./tempdir"
 
 def download_pretrained_model():
     """ Download and extract finetuned model from S3 """
-    #resolved_archive_file = cached_path(HF_FINETUNED_MODEL)
-    resolved_archive_file = CACHED_BOT
+    get_model()
     tempdir = tempfile.mkdtemp()
-    print("TMP:", tempdir)
-    logger.info("extracting archive file {} to temp dir {}".format(resolved_archive_file, tempdir))
-    with tarfile.open(resolved_archive_file, 'r:gz') as archive:
+    logger.info("extracting archive file {} to temp dir {}".format(FINE_TUNED_BOT, tempdir))
+    with tarfile.open(FINE_TUNED_BOT, 'r:gz') as archive:
         archive.extractall(tempdir)
     return tempdir
 
