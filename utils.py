@@ -13,7 +13,6 @@ import torch
 
 from transformers import cached_path
 
-from read_bucket import get_model
 
 #PERSONACHAT_URL = "https://s3.amazonaws.com/datasets.huggingface.co/personachat/personachat_self_original.json"
 PERSONACHAT_URL = "./celebs_dialog_dataset.json"
@@ -22,44 +21,18 @@ PERSONACHAT_URL = "./celebs_dialog_dataset.json"
 #CACHED_BOT = "./model_/model.75f2a4fe69178ff43138117a977e107a5fc7d402603a0825a296b531f246b3f2"
 FINE_TUNED_BOT = "./tempdir/model_/model.75f2a4fe69178ff43138117a977e107a5fc7d402603a0825a296b531f246b3f2"
 
-logger = logging.getLogger(__file__)
 tempfile.tempdir = "./tempdir"
 
 def download_pretrained_model():
     """ Download and extract finetuned model from S3 """
-    get_model()
     tempdir = tempfile.mkdtemp()
-    logger.info("extracting archive file {} to temp dir {}".format(FINE_TUNED_BOT, tempdir))
     with tarfile.open(FINE_TUNED_BOT, 'r:gz') as archive:
         archive.extractall(tempdir)
     return tempdir
 
 
 def get_dataset(tokenizer, dataset_path, dataset_cache):
-    """ Get tokenized PERSONACHAT dataset from S3 or cache."""
-    dataset_path = dataset_path or PERSONACHAT_URL
-    dataset_cache = dataset_cache + '_' + type(tokenizer).__name__  # To avoid using GPT cache for GPT-2 and vice-versa
-    print("PATH:", dataset_path)
-    print("CACHE:", dataset_cache)
-    # Me: may not need if file is on machine, might need to store it for deployment
-    if dataset_cache and os.path.isfile(dataset_cache):
-        logger.info("Load tokenized dataset from cache at %s", dataset_cache)
-        dataset = torch.load(dataset_cache)
-    else:
-        logger.info("Download dataset from %s", dataset_path)
-        personachat_file = cached_path(dataset_path) # from transformers import cached_path
-        with open(personachat_file, "r", encoding="utf-8") as f:
-            dataset = json.loads(f.read())
-
-        logger.info("Tokenize and encode the dataset")
-        def tokenize(obj):
-            if isinstance(obj, str):
-                return tokenizer.convert_tokens_to_ids(tokenizer.tokenize(obj))
-            if isinstance(obj, dict):
-                return dict((n, tokenize(o)) for n, o in obj.items())
-            return list(tokenize(o) for o in obj)
-        dataset = tokenize(dataset)
-        torch.save(dataset, dataset_cache)
+    dataset = torch.load(dataset_cache)
     return dataset
 
 

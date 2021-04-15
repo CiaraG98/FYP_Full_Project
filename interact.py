@@ -26,53 +26,22 @@ PERSONA_KEYWORDS = {
     "humble": "justin"
 }
 
-def initialise():
-    """Initialise onjects for model"""
-    parser = ArgumentParser()
-    parser.add_argument("--dataset_path", type=str, default="", help="Path or url of the dataset. If empty download from S3.")
-    parser.add_argument("--dataset_cache", type=str, default='./dataset_cache', help="Path or url of the dataset cache")
-    parser.add_argument("--model", type=str, default="openai-gpt", help="Model type (openai-gpt or gpt2)", choices=['openai-gpt', 'gpt2'])  # anything besides gpt2 will load openai-gpt
-    parser.add_argument("--model_checkpoint", type=str, default="", help="Path, url or short name of the model")
-    parser.add_argument("--max_history", type=int, default=2, help="Number of previous utterances to keep in history")
-    parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu", help="Device (cuda or cpu)")
+dataset_path = ""
+dataset_cache = "./dataset_cache_OpenAIGPTTokenizer"
+this_model = "openai-gpt"
+max_history = 2
+this_device = "cpu"
+max_length = 20
+min_length = 1
+seed = 0
+temperature = 0.7
+top_k = 0
+top_p = 0.9
+no_sample = False
 
-    parser.add_argument("--no_sample", action='store_true', help="Set to use greedy decoding instead of sampling")
-    parser.add_argument("--max_length", type=int, default=20, help="Maximum length of the output utterances")
-    parser.add_argument("--min_length", type=int, default=1, help="Minimum length of the output utterances")
-    parser.add_argument("--seed", type=int, default=0, help="Seed")
-    parser.add_argument("--temperature", type=float, default=0.7, help="Sampling softmax temperature")
-    parser.add_argument("--top_k", type=int, default=0, help="Filter top-k tokens before sampling (<=0: no filtering)")
-    parser.add_argument("--top_p", type=float, default=0.9, help="Nucleus filtering (top-p) before sampling (<=0.0: no filtering)")
-    args = parser.parse_args()
-
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__file__)
-    logger.info(pformat(args))
-
-    if args.model_checkpoint == "":
-        if args.model == 'gpt2':
-            raise ValueError("Interacting with GPT2 requires passing a finetuned model_checkpoint")
-        else:
-            args.model_checkpoint = download_pretrained_model()
-	
-
-    if args.seed != 0:
-    	random.seed(args.seed)
-    	torch.random.manual_seed(args.seed)
-    	torch.cuda.manual_seed(args.seed)
-
-
-    # Fine-Tuning
-    logger.info("Get pretrained model and tokenizer")
-    tokenizer_class, model_class = (OpenAIGPTTokenizer, OpenAIGPTLMHeadModel)
-    tokenizer = tokenizer_class.from_pretrained(args.model_checkpoint)
-    model = model_class.from_pretrained(args.model_checkpoint)
-    model.to(args.device)
-    add_special_tokens_(model, tokenizer)
-
-    #logger.info("Sample a personality (should send to html)")
-    history = []
-    return tokenizer, model, args, history
+# tokenizer and model
+model = None
+tokenizer = None
 
 def get_persona_key(persona):
     for p in PERSONA_KEYWORDS.keys():
@@ -80,24 +49,35 @@ def get_persona_key(persona):
             return PERSONA_KEYWORDS[p]
 
 
-def get_personality(tokenizer, args):
-    dataset = get_dataset(tokenizer, args.dataset_path, args.dataset_cache)
+def initialise():
+    global tokenizer
+    global model
+    model_checkpoint = download_pretrained_model()
+    tokenizer_class, model_class = (OpenAIGPTTokenizer, OpenAIGPTLMHeadModel)
+    tokenizer = tokenizer_class.from_pretrained(model_checkpoint)
+    model = model_class.from_pretrained(model_checkpoint)
+    model.to(this_device)
+    add_special_tokens_(model, tokenizer)
+    
+    return 'OK'
+    
+
+def get_personality():
+    dataset = torch.load(dataset_cache)
     personalities = [dialog["personality"] for dataset in dataset.values() for dialog in dataset]
     personality = random.choice(personalities)
-    #logger.info("Selected personality: %s", tokenizer.decode(chain(*personality)))
     persona_key = get_persona_key(tokenizer.decode(chain(*personality)))
     return tokenizer.decode(chain(*personality)), personality, persona_key
 
 
-def reply(input_text, tokenizer, history, personality, model, args):
+def reply(input_text, history, personality):
     history.append(tokenizer.encode(input_text))
     with torch.no_grad():
-        # GETTING REPLY
-        out_ids = sample_sequence(personality, history, tokenizer, model, args)
+        out_ids = sample_sequence(personality, history)
     history.append(out_ids)
-    history = history[-(2*args.max_history+1):]
+    history = history[-(2*max_history+1):]
     out_text = tokenizer.decode(out_ids, skip_special_tokens=True)
-    return out_text
+    return out_text, history
 
 
 def top_filtering(logits, top_k=0., top_p=0.9, threshold=-float('Inf'), filter_value=-float('Inf')):
@@ -139,26 +119,26 @@ def top_filtering(logits, top_k=0., top_p=0.9, threshold=-float('Inf'), filter_v
     return logits
 
 
-def sample_sequence(personality, history, tokenizer, model, args, current_output=None):
+def sample_sequence(personality, history, current_output=None):
     special_tokens_ids = tokenizer.convert_tokens_to_ids(SPECIAL_TOKENS)
     if current_output is None:
         current_output = []
 
-    for i in range(args.max_length):
+    for i in range(max_length):
         instance = build_input_from_segments(personality, history, current_output, tokenizer, with_eos=False)
 
-        input_ids = torch.tensor(instance["input_ids"], device=args.device).unsqueeze(0)
-        token_type_ids = torch.tensor(instance["token_type_ids"], device=args.device).unsqueeze(0)
+        input_ids = torch.tensor(instance["input_ids"], device=this_device).unsqueeze(0)
+        token_type_ids = torch.tensor(instance["token_type_ids"], device=this_device).unsqueeze(0)
 
         logits = model(input_ids, token_type_ids=token_type_ids)
         if isinstance(logits, tuple):  # for gpt2 and maybe others
             logits = logits[0]
-        logits = logits[0, -1, :] / args.temperature
-        logits = top_filtering(logits, top_k=args.top_k, top_p=args.top_p)
+        logits = logits[0, -1, :] / temperature
+        logits = top_filtering(logits, top_k=top_k, top_p=top_p)
         probs = F.softmax(logits, dim=-1)
 
-        prev = torch.topk(probs, 1)[1] if args.no_sample else torch.multinomial(probs, 1)
-        if i < args.min_length and prev.item() in special_tokens_ids:
+        prev = torch.topk(probs, 1)[1] if no_sample else torch.multinomial(probs, 1)
+        if i < min_length and prev.item() in special_tokens_ids:
             while prev.item() in special_tokens_ids:
                 if probs.max().item() == 1:
                     warnings.warn("Warning: model generating special token with probability 1.")
@@ -170,24 +150,3 @@ def sample_sequence(personality, history, tokenizer, model, args, current_output
         current_output.append(prev.item())
 
     return current_output
-
-
-"""
-if __name__ == "__main__":
-    run()
-    history = []
-    while True:
-        raw_text = input(">>> ")
-        while not raw_text:
-            print('Prompt should not be empty!')
-            raw_text = input(">>> ")
-        history.append(tokenizer.encode(raw_text))
-        with torch.no_grad():
-            # GETTING REPLY
-            out_ids = sample_sequence(personality, history, tokenizer, model, args)
-        history.append(out_ids)
-        history = history[-(2*args.max_history+1):]
-        out_text = tokenizer.decode(out_ids, skip_special_tokens=True)
-        #return out_text
-        #print(out_text)
-"""

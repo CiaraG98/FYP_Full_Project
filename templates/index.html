@@ -12,12 +12,17 @@
             <!--Header & Buttons-->
             <img src="/static/images/logo.png" alt="tcd logo" id="tcdLogo">
             <div id='title'>I'm a Celebrity</div>
-            <button v-on:click="show_answer_field" id="answer_button">Ready to Guess</button>
+            <button v-on:click="show_answer_field" id="answer_button">Guess Who<i class="fas fa-question"></i></button>
+            <div id='guess_popup'>
+                <input v-model='user_answer' placeholder="Your Guess" id='guess'>
+                <button v-on:click='check_guess' id='check_user_guess'>Submit</button>
+                <button v-on:click='close_guess' id='cancel'>Close</button>
+                <button v-on:click='reveal_persona' id='show_persona'>Show Persona</button>
+                <p id='response'></p>
+            </div>
+            <button id='feedback_button'><a href='https://forms.gle/cc2UGa8EBqvEHUvH9' target='_blank'>Give Feedback</a></button>
             <button v-on:click="get_persona" id='bot_button'>Get Personality <i class="fas fa-brain"></i></button>
             <button v-on:click="start_bot" id='start_button'>Start Bot <i class="fas fa-robot"></i></button>
-            <button v-on:click="show_about" id='a_button'>About <i class="fas fa-book-open"></i></button>
-            <button v-on:click="show_instructions" id='i_button'>Instructions <i class="fas fa-info-circle"></i></button>
-            <div id='popup'>Popup</div>
             <!--Bot Start-->
             <div id='bot_frame'>
                 <div id='bot_body'>
@@ -35,18 +40,22 @@
                 el: '#WebContainer',
                 data: {
                     bot_input: '',
-                    bot_initialised: false,
                     user_answer: '',
-                    current_key: ''
                 },
                 methods: {
                     start_bot: startBot,
                     get_persona: get_persona,
                     reply_to_bot: reply_to_bot,
-                    append_messages: append_messages
+                    append_messages: append_messages,
+                    show_answer_field: showGuess,
+                    check_guess: checkGuess,
+                    close_guess: closeGuess,
+                    reveal_persona: revealPersona,
                 }
             });
             
+            let current_key = '';
+            let this_answer = '';
             let answers = {
                 "shane": ["Shane Dawson", "shane dawson"],
                 "ariana": ["Ariana Grande", "ariana grande"],
@@ -57,38 +66,79 @@
                 "justin": ["Justin Bieber", "justin bieber"]
             };
 
+            let bot_initialised = false;
+            let has_persona = false;
+
+            function revealPersona(){
+                let response = document.getElementById('response');
+                response.innerHTML = answers[current_key][0];
+            }
+
+            function showGuess(){
+                let response = document.getElementById('response');
+                response.innerHTML = "";
+                let popup = document.getElementById('guess_popup');
+                popup.style.display = 'block';
+            }
+
+            function closeGuess(){
+                let popup = document.getElementById('guess_popup');
+                popup.style.display = 'none';
+            }
+
             function checkGuess(){
-                let options = answers[this.current_key];
-                for(a in options){
-                    if(this.user_answer == a){
-                        console.log("correct");
+                this_answer = this.user_answer;
+                let response = document.getElementById('response');
+                let options = answers[current_key];
+                for(let i = 0; i < options.length; i++){
+                    if(this_answer.localeCompare(options[i] == 0)){
+                        response.innerHTML = 'Correct!';
+                        console.log("user answer correct");
+                        return;
                     }
                 }
-                console.log("incorrect");
+                response.innerHTML = 'Nope! Try again.';
+                console.log("user answer incorrect");
             }
 
             function startBot(){
-                append_messages("Give me a second...", true);
-                console.log("Starting Bot...");
-                fetch('/start_bot').then(function(response){
-                    return response.json();
-                }).then(function(json){
-                    console.log(json);
-                    append_messages("I'm ready! Get me a personality.", true);
-                });
-                this.bot_initialised = true;
+                if(bot_initialised == false){
+                    append_messages("Give me a second...", true);
+                    console.log("Starting Bot...");
+                    fetch('/start_bot').then(function(response){
+                        return response.json();
+                    }).then(function(json){
+                        console.log(json);
+                        if(json.status = "Bot Successfully Started"){
+                            bot_initialised = true;
+                            append_messages("I'm ready! Get me a personality.", true);
+                        }
+                        else{
+                            append_messages("Oh, something doesn't feel right. Try starting me up again.", true);
+                        }
+                        
+                    });
+                }
+                else{
+                    append_messages("Hey, I'm awake you don't need to press that!", true);
+                }
             }
 
             function get_persona(){
-                if(this.bot_initialised){
+                if(has_persona){
+                    append_messages("New personality coming right up!", true);
+                }
+                has_persona = false;
+                if(bot_initialised){
                     console.log("get_persona Called...");
                     fetch('/get_persona').then(function(response){
                         return response.json();
                     }).then(function(json){
-                        console.log(json);
-                        this.current_key = json.key;
-                        append_messages(json.persona, true);
-                        checkGuess();
+                        if(json.status == 'success'){
+                            has_persona = true;
+                            current_key = json.key;
+                            append_messages(json.persona, true);
+                        }
                     });
                 }
                 else{
@@ -98,20 +148,25 @@
 
             function reply_to_bot(){
                 append_messages(this.bot_input, false);
-                fetch('/reply_to_bot', {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'POST',
-                    body: JSON.stringify({
-                        "user_reply" : this.bot_input
-                    })
-                }).then(function(response){
-                    return response.json();
-                }).then(function(json){
-                    console.log(json);
-                    append_messages(json.reply, true);
-                });
+                if(has_persona){
+                    fetch('/reply_to_bot', {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        method: 'POST',
+                        body: JSON.stringify({
+                            "user_reply" : this.bot_input
+                        })
+                    }).then(function(response){
+                        return response.json();
+                    }).then(function(json){
+                        append_messages(json.reply, true);
+                    });
+                }
+                else{
+                    append_messages("I am not ready yet. I need a persona.", true);
+                }
+                
             }
 
             function append_messages(text, isBot){
