@@ -144,6 +144,7 @@ def train():
 
     print("DEVICE:", args.device)
     print("DATASET:", args.dataset_path)
+    print("CACHE:", args.dataset_cache)
 
     # Initialize distributed training if needed
     args.distributed = (args.local_rank != -1)
@@ -258,6 +259,8 @@ def train():
         torch.save(args, log_dir + '/model_training_args.bin')
         getattr(model, 'module', model).config.to_json_file(os.path.join(log_dir, CONFIG_NAME))
         tokenizer.save_pretrained(log_dir)
+        print("LOGDIR:", log_dir)
+
 
     # Run the training
     trainer.run(train_loader, max_epochs=args.n_epochs)

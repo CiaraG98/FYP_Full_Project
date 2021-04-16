@@ -2,28 +2,14 @@ import pandas as pd
 import os
 import random
 import json
-"""
-dataset = {'train': [[{'personality': [...], 'utterances': [{'candidates': [...], 
-	'history': [...]}, {'candidates': [...], 'history': [...]}]}]], 
-	'valid': ...}
 
-
-    Procedure:
-    personality sentences - may need to write them by hand, however only need around 5.
-    utterances: 7 dicts, each with 20 candidate sentences and anywhere between 1 - 13 history sentences.
-
-    removing links:
-    import re
-    text = re.sub(r'^https?:\/\/.*[\r\n]*', '', text, flags=re.MULTILINE)
-
-"""
 celebs = "./celeb_data"
 dialog_dataset = {'train': [], 'valid': []}
 PERSONA_DICT = {
                 'ArianaGrande_tweets': ['I love my fans so much.', 'Dancing in high heals is tough.',
                 'Life is beautiful.', 'Music is my biggest passion.'], 
 
-                'KimKardashian_tweets': ['I am Armenian.', 'I have never used my pool.', 'When I gain a pound its in the headlines.', 
+                'KimKardashian_tweets': ['I am Armenian.', 'I like nudity.', 'When I gain a pound its in the headlines.', 
                 "I don't talk about money."],
 
                 'KylieJenner_tweets': ['I take 500 selfies to get one I like.', "The airport scares me.", 
@@ -36,7 +22,7 @@ PERSONA_DICT = {
                 'Anybody could be a sociopath.', 'I know what I do for a living is ridiculous.', 
                 'There is nothing creepier to me than a student who hangs out with the teachers.'],
 
-                'Zendaya_tweets': ["I'm a Virgo.", 'I use my platform as a tool and a way to speak about greater change.',
+                'Zendaya_tweets': ["I wore a mullet to the Grammys.", 'I use my platform as a tool and a way to speak about greater change.',
                 'I love singing and would love to record an album at some point.', "I've always grown up around theater.", 
                 "I'm a chocolate addict."],
                 
@@ -47,52 +33,54 @@ HISTORY_APPENDS = 2
 CANDIDATES_LEN = 20
 NUMBER_OF_DICTS = 7
 
-# Loop through files
-for file in sorted(os.listdir(celebs)):
-    print("Working on", file)
-    this_celeb = file[:len(file)-4]
-    file = celebs + '/' + file
-    
-    # testing reading in tweets
-    df = pd.read_csv(file)
-    data = df.to_dict('records')
-    random.shuffle(data)
+for dataset in ['train', 'valid']:
+    print("\nworking on", dataset)
 
-    # testing building dataset
-    history = ['hi! how are you doing?']
-    utterances = []
-
-    for i in range(NUMBER_OF_DICTS):
-        this_candidates = []
-        this_history = []
-        this_utterance = {'candidates': [], 'history': []}
-        for t in range(CANDIDATES_LEN):
-            this_candidates.append(data[t]['text'])
+    # Loop through files
+    for file in sorted(os.listdir(celebs)):
+        print("Working on", file)
+        this_celeb = file[:len(file)-4]
+        file = celebs + '/' + file
         
-        data = data[CANDIDATES_LEN:]
+        # testing reading in tweets
+        df = pd.read_csv(file)
+        data = df.to_dict('records')
+        random.shuffle(data)
 
-        if i > 0:
-            for i in range(HISTORY_APPENDS):
-                this_history.append(data[i]['text'])
-        
-            data = data[HISTORY_APPENDS:]
-        
-        for it, x in enumerate(history):
-            this_history.insert(it, x)
-        
-        history = this_history
+        # testing building dataset
+        history = ['hi! how are you doing?']
+        utterances = []
 
-        this_utterance['candidates'] = this_candidates
-        this_utterance['history'] = this_history
-        utterances.append(this_utterance)
+        for i in range(NUMBER_OF_DICTS):
+            this_candidates = []
+            this_history = []
+            this_utterance = {'candidates': [], 'history': []}
+            for t in range(CANDIDATES_LEN):
+                this_candidates.append(data[t]['text'])
+            
+            data = data[CANDIDATES_LEN:]
 
-    celeb_persona = PERSONA_DICT[this_celeb]
-    this_persona = {'personality': celeb_persona, 'utterances': utterances}
-    dialog_dataset['train'].append(this_persona)
-    dialog_dataset['valid'].append(this_persona)
+            if i > 0:
+                for i in range(HISTORY_APPENDS):
+                    this_history.append(data[i]['text'])
+            
+                data = data[HISTORY_APPENDS:]
+            
+            for it, x in enumerate(history):
+                this_history.insert(it, x)
+            
+            history = this_history
+
+            this_utterance['candidates'] = this_candidates
+            this_utterance['history'] = this_history
+            utterances.append(this_utterance)
+
+        celeb_persona = PERSONA_DICT[this_celeb]
+        this_persona = {'personality': celeb_persona, 'utterances': utterances}
+        dialog_dataset[dataset].append(this_persona)
 
 
-with open("celebs_dialog_dataset.json", 'w', encoding='utf-8') as f:
+with open("new_celebs_dialog_dataset.json", 'w', encoding='utf-8') as f:
     json.dump(dialog_dataset, f, ensure_ascii=False)
 
 print("Done.")

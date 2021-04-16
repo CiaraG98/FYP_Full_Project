@@ -68,6 +68,7 @@
 
             let bot_initialised = false;
             let has_persona = false;
+            let this_persona = ''
 
             function revealPersona(){
                 let response = document.getElementById('response');
@@ -137,7 +138,9 @@
                         if(json.status == 'success'){
                             has_persona = true;
                             current_key = json.key;
-                            append_messages(json.persona, true);
+                            //append_messages(json.persona, true);
+                            this_persona = json.persona;
+                            append_messages("Okay I'm ready. Let's Chat", true);
                         }
                     });
                 }
